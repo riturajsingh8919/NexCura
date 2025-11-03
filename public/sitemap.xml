@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xhtml="https://www.w3.org/1999/xhtml"
+      xmlns:image="https://www.google.com/schemas/sitemap-image/1.1"
+      xmlns:video="https://www.google.com/schemas/sitemap-video/1.1">
+  
+  <!-- Home / Root -->
+  <url>
+    <loc>https://www.genaihealth.care/</loc>
+    <lastmod>2025-10-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Example: About / Company page -->
+  <url>
+    <loc>https://www.genaihealth.care/about</loc>
+    <lastmod>2025-10-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Example: Services page -->
+  <url>
+    <loc>https://www.genaihealth.care/services</loc>
+    <lastmod>2025-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Example: Blog / News / Insights listing page -->
+  <url>
+    <loc>https://www.genaihealth.care/blog</loc>
+    <lastmod>2025-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Example: Individual Blog / Article page -->
+  <url>
+    <loc>https://www.genaihealth.care/blog/example-article-slug</loc>
+    <lastmod>2025-10-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Example: Contact / Get in Touch page -->
+  <url>
+    <loc>https://www.genaihealth.care/contact</loc>
+    <lastmod>2025-09-28</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Add more <url> entries here for all important pages -->
+</urlset>

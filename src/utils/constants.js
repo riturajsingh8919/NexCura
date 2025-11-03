@@ -1,0 +1,1 @@
+export const defaultErrorMessage ="An error occured"
