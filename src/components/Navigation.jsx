@@ -40,7 +40,7 @@ const Navigation = ({ isScrolled = false }) => {
         { name: "Employers", href: "/employers", icon: Building2 },
         { name: "Caregivers", href: "/caregivers", icon: Users },
         { name: "Individuals", href: "/Individuals", icon: User },
-         { name: "Smart Ring", href: "/smart-ring", icon: Circle },
+        { name: "NxRing", href: "/NxRing", icon: Circle },
       ],
     },
     {

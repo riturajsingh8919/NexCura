@@ -9,11 +9,7 @@ import {
   IoBatteryChargingOutline,
   IoPhonePortraitOutline,
   IoSyncOutline,
-  IoAppsOutline,
-  IoMoonOutline,
-  IoFitnessOutline,
   IoWaterOutline,
-  IoSearchOutline,
 } from "react-icons/io5";
 
 export default function FAQSection() {
@@ -22,74 +18,44 @@ export default function FAQSection() {
   const faqs = [
     {
       id: 1,
-      question: "What is the sizing kit process?",
+      question: "How do I know which NxRing size to select?",
       answer:
-        "Our complimentary sizing kit includes 8 different ring sizes to help you find your perfect fit. Simply order the kit, try the sizes at home, and return it using the prepaid shipping label. Once you know your size, you can confidently order your NexRing.",
+        "Please refer to our NxRing measurement guide to get the most accurate fit.",
       icon: IoHelpCircleOutline,
     },
     {
       id: 2,
-      question: "How do I purchase an additional charging case?",
-      answer:
-        "You can purchase an additional charging case directly from our online store. Navigate to the Accessories section, select the charging case, and add it to your cart. Each case comes with a USB-C cable and provides up to 7 days of charging power.",
+      question: "Does the NxRing come with a charging case?",
+      answer: "Yes, each order of the NxRing includes a charging case.",
       icon: IoCartOutline,
     },
     {
       id: 3,
-      question: "How long does the NexRing battery last?",
+      question: "How long does the NxRing battery last?",
       answer:
-        "The NexRing battery lasts up to 7 days on a single charge with typical use. Battery life may vary depending on usage patterns, features enabled, and ambient temperature. The included charging case provides multiple recharges without needing an outlet.",
+        "The NxRing battery lasts up to 5 days on a single charge with typical use. Battery life may vary depending on usage patterns, features enabled, and ambient temperature. The included charging case provides multiple recharges without needing an outlet.",
       icon: IoBatteryChargingOutline,
     },
     {
       id: 4,
-      question:
-        "Which devices and operating systems (OS) is the NexRing app compatible with?",
+      question: "Which devices is the NxRing compatible with?",
       answer:
-        "The NexRing app is compatible with iOS 14.0 or later (iPhone 6s and newer) and Android 8.0 or later. The app requires Bluetooth 5.0 or higher for optimal connectivity. Tablets are also supported for both iOS and Android platforms.",
+        "The NxRing connects to the NexCura app which is available in the Apple App Store and Google Play Store.",
       icon: IoPhonePortraitOutline,
     },
     {
       id: 5,
-      question: "How does syncing the NexRing with my smartphone work?",
+      question: "How does the NxRing sync with my device?",
       answer:
-        "Syncing is automatic and seamless. Once paired via Bluetooth, your NexRing continuously syncs data throughout the day. Simply open the app, and your latest health metrics will be updated. Manual sync is also available by pulling down to refresh in the app.",
+        "The NxRing connects to your phone or tablet via bluetooth. The NxRing continuously syncs data to the NexCura app which gives you actionable insights about your health and wellness.",
       icon: IoSyncOutline,
     },
     {
       id: 6,
-      question: "Can the NexRing sync with other apps?",
+      question: "Is the NxRing water-resistant?",
       answer:
-        "Yes! NexRing integrates with popular health and fitness apps including Apple Health, Google Fit, Strava, and more. You can enable these integrations in the app settings to share your data across platforms and maintain a comprehensive health profile.",
-      icon: IoAppsOutline,
-    },
-    {
-      id: 7,
-      question: "Can I wear my NexRing only at night?",
-      answer:
-        "Absolutely! While wearing the ring 24/7 provides the most comprehensive data, wearing it only at night still gives you valuable sleep insights including sleep stages, heart rate variability, and recovery metrics. Night-only wear is perfect for sleep optimization.",
-      icon: IoMoonOutline,
-    },
-    {
-      id: 8,
-      question: "Can I wear my NexRing while working out?",
-      answer:
-        "Yes! The NexRing is designed for active lifestyles. It automatically detects workouts and tracks heart rate, calories burned, and activity intensity. The durable titanium construction withstands impact, making it perfect for any workout routine.",
-      icon: IoFitnessOutline,
-    },
-    {
-      id: 9,
-      question: "Is the NexRing waterproof?",
-      answer:
-        "The NexRing is water-resistant up to 100 meters (10 ATM), making it suitable for swimming, showering, and water sports. You can wear it worry-free in any water activity. However, avoid exposing it to hot water like saunas or hot tubs.",
+        "Yes, the NxRing has a durable titanium build and tightly sealed design which  is water-resistant up to 50 meters (50 ATM) which makes it perfect for indoor, outdoor, and even underwater activities.",
       icon: IoWaterOutline,
-    },
-    {
-      id: 10,
-      question: "How can I find a lost ring?",
-      answer:
-        "The NexRing app features a 'Find My Ring' function that shows the last known location of your ring on a map. The ring will also emit a sound when activated through the app, helping you locate it nearby. Premium members get extended location history.",
-      icon: IoSearchOutline,
     },
   ];
 
@@ -120,7 +86,7 @@ export default function FAQSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-gray-400 text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
-            Everything you need to know about NexRing
+            Everything you need to know about NxRing
           </p>
         </motion.div>
 
@@ -238,31 +204,6 @@ export default function FAQSection() {
             );
           })}
         </div>
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-12 md:mt-16"
-        >
-          <p className="text-gray-400 text-base md:text-lg mb-6">
-            Still have questions? We&apos;re here to help!
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 rounded-full font-bold text-base md:text-lg cursor-pointer"
-            style={{
-              background: "linear-gradient(135deg, #5646a3 0%, #7c6bb8 100%)",
-              boxShadow: "0 8px 24px rgba(86, 70, 163, 0.4)",
-              color: "white",
-            }}
-          >
-            Contact Support
-          </motion.button>
-        </motion.div>
       </div>
     </section>
   );

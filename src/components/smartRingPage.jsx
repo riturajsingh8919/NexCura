@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/features/cart/cartSlice";
 import { useRouter } from "next/navigation";
 import { FaAngleRight } from "react-icons/fa";
-import { GiSmartphone } from "react-icons/gi";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import Header from "./Header";
@@ -19,16 +18,11 @@ export default function SmartRingPage() {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showPreorderDialog, setShowPreorderDialog] = useState(true);
-  const [preorderCode, setPreorderCode] = useState("");
-  const [error, setError] = useState("");
   const [isMounted, setIsMounted] = useState(false);
-  const preorderDialogShown = sessionStorage.getItem("preOrderDialogShown");
   const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
-    // sessionStorage.setItem("preOrderDialogShown","false");
     const fetchProducts = async () => {
       try {
         const res = await axios.get(`${apiBaseUrl}/getAllProducts`);
@@ -43,42 +37,11 @@ export default function SmartRingPage() {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    if (
-      showPreorderDialog &&
-      (preorderDialogShown === null || preorderDialogShown === "false")
-    ) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-    return () => document.body.classList.remove("overflow-hidden");
-  }, [showPreorderDialog]);
-
-  const handlePreorderSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!preorderCode.trim()) {
-      setError("Preorder code is required");
-      return;
-    }
-
-    try {
-      setError("");
-
-      const res = await axios.get(`${apiBaseUrl}/getRingPreorderCode`);
-
-      if (res.data?.code && res.data.code === preorderCode.trim()) {
-        setShowPreorderDialog(false);
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("preOrderDialogShown", "true");
-        }
-      } else {
-        setError("Invalid preorder code. Please try again.");
-      }
-    } catch (err) {
-      console.error("Error validating preorder code:", err);
-      setError("Something went wrong. Please try again later.");
+  const handleOrderNowClick = () => {
+    // Navigate directly to product details page
+    const blackProduct = products.find((p) => p.productColor === "Matte Black");
+    if (blackProduct) {
+      router.push(`/smartRingDetails/${blackProduct.productId}`);
     }
   };
 
@@ -107,16 +70,9 @@ export default function SmartRingPage() {
 
       {/* Glowing Orbs */}
       <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#5646a3] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob" />
-      <div className="absolute top-1/3 -right-48 w-96 h-96 bg-emerald-500 rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
+      <div className="absolute top-1/3 -right-48 w-96 h-96 bg-[#585462] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
 
-      <div
-        className={
-          showPreorderDialog &&
-          (preorderDialogShown === null || preorderDialogShown === "false")
-            ? "blur-sm pointer-events-none"
-            : ""
-        }
-      >
+      <div>
         <Header />
 
         {/* Hero Section with Premium Glassmorphism */}
@@ -138,13 +94,13 @@ export default function SmartRingPage() {
               }}
             >
               <Link
-                href="/"
+                href="/NxRing"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 Home
               </Link>
               <FaAngleRight className="text-gray-500 text-xs" />
-              <span className="text-white font-medium">NexCura Smart Ring</span>
+              <span className="text-white font-medium">NxRing</span>
             </div>
           </motion.div>
 
@@ -157,67 +113,6 @@ export default function SmartRingPage() {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="space-y-6 relative z-10"
               >
-                {/* Logo Badge */}
-                <div className="relative inline-block">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3, type: "spring" }}
-                    className="flex items-center gap-3"
-                  >
-                    {/* Premium Glass Badge */}
-                    <div
-                      className="px-5 py-2.5 rounded-full flex items-center gap-2.5"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(251, 245, 234, 0.9) 100%)",
-                        backdropFilter: "blur(20px)",
-                        boxShadow:
-                          "0 8px 32px rgba(86, 70, 163, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
-                        border: "1px solid rgba(255, 255, 255, 0.3)",
-                      }}
-                    >
-                      <div
-                        className="p-1.5 rounded-full"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #fbf5ea 0%, #ffffff 100%)",
-                        }}
-                      >
-                        <GiSmartphone className="w-4 h-4 text-[#5646a3]" />
-                      </div>
-                      <span className="text-base font-bold text-[#5646a3]">
-                        NexCura
-                      </span>
-                    </div>
-
-                    {/* Smart Ring Badge */}
-                    <div
-                      className="px-4 py-2.5 rounded-full"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(236, 72, 153, 0.1) 100%)",
-                        backdropFilter: "blur(20px)",
-                        border: "1px solid rgba(236, 72, 153, 0.3)",
-                      }}
-                    >
-                      <span className="text-sm font-bold bg-gradient-to-r from-pink-400 to-pink-300 bg-clip-text text-transparent">
-                        SMART RING
-                      </span>
-                    </div>
-                  </motion.div>
-
-                  {/* NEW Badge */}
-                  <motion.span
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5, type: "spring" }}
-                    className="absolute -top-3 -right-3 bg-gradient-to-br from-yellow-400 to-yellow-500 text-black text-xs font-black px-3 py-1 rounded-full shadow-lg"
-                  >
-                    NEW
-                  </motion.span>
-                </div>
-
                 {/* Main Heading with Gradient */}
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
@@ -226,11 +121,11 @@ export default function SmartRingPage() {
                   className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight"
                 >
                   <span className="bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
-                    Monitor your health
+                    Smarter insights.
                   </span>
                   <br />
-                  <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                    more intelligently
+                  <span className="bg-gradient-to-r from-[#5646a3] via-[#aeacaf] to-[#5646a3] bg-clip-text text-transparent">
+                    Stronger you.
                   </span>
                 </motion.h1>
 
@@ -239,41 +134,13 @@ export default function SmartRingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className="p-6 rounded-2xl"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(86, 70, 163, 0.15) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                    backdropFilter: "blur(20px)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                  }}
                 >
                   <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
-                    Enhance your well-being with our smart ring—designed to
-                    intelligently monitor vital health metrics, activity levels,
-                    and sleep patterns, empowering smarter decisions for a
-                    healthier lifestyle.
+                    NxRing brings intelligent health tracking to your
+                    fingertips. Monitor your body, sleep, and activity
+                    effortlessly while taking control of your well-being with
+                    real-time, personalized insights.
                   </p>
-                </motion.div>
-
-                {/* CTA Button with Premium Styling */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.8 }}
-                >
-                  <button
-                    className="group relative px-8 py-4 font-bold text-lg overflow-hidden"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                      boxShadow: "0 10px 40px rgba(86, 70, 163, 0.4)",
-                    }}
-                  >
-                    <span className="relative z-10">
-                      Reserve your Smart Ring now – pre-booking is live!
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </button>
                 </motion.div>
               </motion.div>
 
@@ -293,7 +160,7 @@ export default function SmartRingPage() {
                   className="relative"
                 >
                   {/* Glow Effect Behind Ring */}
-                  <div className="absolute inset-0 bg-gradient-radial from-[#5646a3]/40 via-purple-500/20 to-transparent rounded-full blur-3xl scale-150" />
+                  <div className="absolute inset-0 bg-gradient-radial from-[#5646a3]/40 via-[#5646a3]/20 to-transparent rounded-full blur-3xl scale-150" />
 
                   <img
                     src="/images/smart_ring_img.svg"
@@ -318,11 +185,8 @@ export default function SmartRingPage() {
               className="text-center mb-16"
             >
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
-                Available Now
+                Pre-Order Available Now
               </h2>
-              <p className="text-gray-400 text-lg md:text-xl">
-                Premium smart ring collection
-              </p>
             </motion.div>
 
             {products.length > 0 &&
@@ -342,7 +206,7 @@ export default function SmartRingPage() {
                   >
                     <div className="group relative">
                       {/* Subtle Glow Effect */}
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] via-[#5646a3] to-[#585462] rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
 
                       {/* Compact Modern Card */}
                       <div
@@ -360,7 +224,7 @@ export default function SmartRingPage() {
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="md:col-span-2 bg-gradient-to-br from-[#5646a3]/10 to-purple-900/10 flex items-center justify-center p-6 md:p-8"
+                            className="md:col-span-2 bg-gradient-to-br from-[#5646a3]/10 to-[#585462]/10 flex items-center justify-center p-6 md:p-8"
                           >
                             <motion.div
                               whileHover={{ scale: 1.08, rotateZ: 3 }}
@@ -386,24 +250,6 @@ export default function SmartRingPage() {
                           >
                             {/* Compact Header */}
                             <div className="space-y-2">
-                              <div className="flex items-center gap-2">
-                                <span className="px-3 py-1 bg-gradient-to-r from-[#5646a3] to-purple-600 rounded-full text-xs font-bold text-white">
-                                  PREMIUM
-                                </span>
-                                {products[0].productOldAmount && (
-                                  <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-xs font-bold text-emerald-300">
-                                    SAVE{" "}
-                                    {Math.round(
-                                      ((products[0].productOldAmount -
-                                        products[0].productCurrentAmount) /
-                                        products[0].productOldAmount) *
-                                        100
-                                    )}
-                                    %
-                                  </span>
-                                )}
-                              </div>
-
                               <h3 className="text-lg md:text-xl font-medium text-white">
                                 {products[0].productDetails}
                               </h3>
@@ -439,7 +285,7 @@ export default function SmartRingPage() {
                                   className="flex items-center gap-1.5"
                                 >
                                   <svg
-                                    className="w-4 h-4 text-emerald-400 flex-shrink-0"
+                                    className="w-4 h-4 text-[#5646a3] flex-shrink-0"
                                     fill="currentColor"
                                     viewBox="0 0 20 20"
                                   >
@@ -458,45 +304,41 @@ export default function SmartRingPage() {
 
                             {/* Delivery Badge */}
                             {products[0].deliveryDate && (
-                              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg w-fit">
+                              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#5646a3]/10 border border-[#5646a3]/20 rounded-lg w-fit">
                                 <span className="text-sm">🚚</span>
-                                <span className="text-xs text-emerald-300 font-semibold">
+                                <span className="text-xs text-[#aeacaf] font-semibold">
                                   Delivery by {products[0].deliveryDate}
                                 </span>
                               </div>
                             )}
 
                             {/* Compact CTA Button */}
-                            <Link
-                              href={`/smartRingDetails/${blackProduct?.productId}`}
+                            <motion.button
+                              onClick={handleOrderNowClick}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="w-full py-3 px-6 rounded-lg font-bold text-base text-white relative overflow-hidden cursor-pointer group/btn"
+                              style={{
+                                background:
+                                  "linear-gradient(135deg, #5646a3 0%, #585462 100%)",
+                                boxShadow: "0 4px 20px rgba(86, 70, 163, 0.4)",
+                              }}
                             >
-                              <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="w-full py-3 px-6 rounded-lg font-bold text-base text-white relative overflow-hidden cursor-pointer group/btn"
-                                style={{
-                                  background:
-                                    "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                                  boxShadow:
-                                    "0 4px 20px rgba(86, 70, 163, 0.4)",
-                                }}
-                              >
-                                <span className="relative z-10 flex items-center justify-center gap-2">
-                                  Order Now
-                                  <motion.span
-                                    animate={{ x: [0, 4, 0] }}
-                                    transition={{
-                                      duration: 1.5,
-                                      repeat: Infinity,
-                                      ease: "easeInOut",
-                                    }}
-                                  >
-                                    →
-                                  </motion.span>
-                                </span>
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-                              </motion.button>
-                            </Link>
+                              <span className="relative z-10 flex items-center justify-center gap-2">
+                                Order Now
+                                <motion.span
+                                  animate={{ x: [0, 4, 0] }}
+                                  transition={{
+                                    duration: 1.5,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                  }}
+                                >
+                                  →
+                                </motion.span>
+                              </span>
+                              <div className="absolute inset-0 bg-gradient-to-r from-[#5646a3] to-[#585462] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                            </motion.button>
                           </motion.div>
                         </div>
                       </div>
@@ -508,175 +350,6 @@ export default function SmartRingPage() {
         </section>
         <Footer />
       </div>
-
-      {/* Premium Preorder Dialog */}
-      <AnimatePresence>
-        {showPreorderDialog &&
-          (preorderDialogShown === null || preorderDialogShown === "false") && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[9999] flex items-center justify-center px-4"
-              style={{
-                background: "rgba(0, 13, 36, 0.85)",
-                backdropFilter: "blur(20px)",
-              }}
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                transition={{ type: "spring", duration: 0.5 }}
-                className="relative w-full max-w-md"
-              >
-                {/* Glow Effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50" />
-
-                {/* Dialog Content */}
-                <div
-                  className="relative rounded-3xl p-8 md:p-10"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(251, 245, 234, 0.95) 100%)",
-                    backdropFilter: "blur(20px)",
-                    boxShadow:
-                      "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 1)",
-                    border: "1px solid rgba(255, 255, 255, 0.5)",
-                  }}
-                >
-                  {/* Close Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.1, rotate: 90 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => router.push("/smart-ring")}
-                    className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                      border: "1px solid rgba(86, 70, 163, 0.2)",
-                    }}
-                  >
-                    <span className="text-2xl font-bold text-[#5646a3]">×</span>
-                  </motion.button>
-
-                  {/* Icon */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.2, type: "spring" }}
-                    className="flex justify-center mb-6"
-                  >
-                    <div
-                      className="p-4 rounded-2xl"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                        boxShadow: "0 10px 30px rgba(86, 70, 163, 0.4)",
-                      }}
-                    >
-                      <GiSmartphone className="w-8 h-8 text-white" />
-                    </div>
-                  </motion.div>
-
-                  {/* Title */}
-                  <motion.h2
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-2xl md:text-3xl font-black text-center mb-3 bg-gradient-to-r from-[#5646a3] to-purple-600 bg-clip-text text-transparent"
-                  >
-                    Enter Pre-Order Code
-                  </motion.h2>
-
-                  {/* Description */}
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-center text-gray-700 mb-6 text-base"
-                  >
-                    Enter the code to proceed with your smart ring pre-order.
-                  </motion.p>
-
-                  {/* Form */}
-                  <form onSubmit={handlePreorderSubmit} className="space-y-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <input
-                        type="text"
-                        value={preorderCode}
-                        onChange={(e) => setPreorderCode(e.target.value)}
-                        placeholder="Enter your pre-order code"
-                        className="w-full px-6 py-4 rounded-2xl text-gray-900 font-medium focus:outline-none focus:ring-2 transition-all duration-300"
-                        style={{
-                          background: "rgba(255, 255, 255, 0.8)",
-                          border: "2px solid rgba(86, 70, 163, 0.2)",
-                          boxShadow: "inset 0 2px 8px rgba(0, 0, 0, 0.05)",
-                        }}
-                        autoFocus
-                      />
-                    </motion.div>
-
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="p-4 rounded-xl"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)",
-                          border: "1px solid rgba(239, 68, 68, 0.2)",
-                        }}
-                      >
-                        <p className="text-red-600 text-sm font-medium text-center">
-                          {error}
-                        </p>
-                      </motion.div>
-                    )}
-
-                    <motion.button
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      type="submit"
-                      className="w-full py-4 px-8 rounded-2xl font-bold text-lg text-white relative overflow-hidden group cursor-pointer"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                        boxShadow: "0 10px 30px rgba(86, 70, 163, 0.4)",
-                      }}
-                    >
-                      <span className="relative z-10">Proceed</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </motion.button>
-                  </form>
-
-                  {/* Additional Info */}
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.7 }}
-                    className="text-center text-sm text-gray-600 mt-6"
-                  >
-                    Don't have a code?{" "}
-                    <Link
-                      href="/"
-                      className="text-[#5646a3] font-bold hover:underline"
-                    >
-                      Go back to home
-                    </Link>
-                  </motion.p>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-      </AnimatePresence>
     </div>
   );
 }

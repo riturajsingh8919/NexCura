@@ -16,6 +16,7 @@ import { addToCart, updateQuantity } from "../redux/features/cart/cartSlice";
 import { motion, AnimatePresence } from "framer-motion";
 import { BsShieldCheck, BsLightning, BsDiamond } from "react-icons/bs";
 import { HiSparkles } from "react-icons/hi";
+import { GiSmartphone } from "react-icons/gi";
 import axios from "axios";
 
 const SmartRingDetails = ({ product }) => {
@@ -23,7 +24,7 @@ const SmartRingDetails = ({ product }) => {
   const { items } = useSelector((state) => state.cart);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(6);
+  const [selectedSize, setSelectedSize] = useState(8);
   const [selectedColor, setSelectedColor] = useState(
     product.detailsType || "Black"
   );
@@ -40,6 +41,10 @@ const SmartRingDetails = ({ product }) => {
   const router = useRouter();
   const [loadingCheckout, setLoadingCheckout] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+  const [showPreorderDialog, setShowPreorderDialog] = useState(false);
+  const [preorderCode, setPreorderCode] = useState("");
+  const [error, setError] = useState("");
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handlePrev = () => {
     setSelectedIndex((i) => (i === 0 ? images.length - 1 : i - 1));
@@ -58,33 +63,63 @@ const SmartRingDetails = ({ product }) => {
   }, [images.length]);
 
   const handleOrderNow = () => {
-    const existing = items.find(
-      (item) =>
-        item.id === currentProduct.id &&
-        item.size === selectedSize &&
-        item.color === currentProduct.detailsType
-    );
+    // First show preorder dialog
+    setShowPreorderDialog(true);
+  };
 
-    const productPayload = {
-      id: currentProduct.id,
-      productDetails: currentProduct.title,
-      color: currentProduct.detailsType,
-      productCurrentAmount: currentProduct.productCurrentAmount,
-      deliveryDate: currentProduct.deliveryDate,
-      productImages: currentProduct.images,
-      size: selectedSize,
-      qty: quantity,
-      role: selectedRole,
-    };
+  const handlePreorderSubmit = async (e) => {
+    e.preventDefault();
 
-    if (existing) {
-      setPendingProduct(productPayload); // ✅ now well-shaped
-      setShowConfirm(true);
-    } else {
-      dispatch(addToCart(productPayload));
-      router.push("/cart");
+    if (!preorderCode.trim()) {
+      setError("Preorder code is required");
+      return;
+    }
+
+    try {
+      setError("");
+
+      const res = await axios.get(`${apiBaseUrl}/getRingPreorderCode`);
+
+      if (res.data?.code && res.data.code === preorderCode.trim()) {
+        // Valid code - add to cart
+        const existing = items.find(
+          (item) =>
+            item.id === currentProduct.id &&
+            item.size === selectedSize &&
+            item.color === currentProduct.detailsType
+        );
+
+        const productPayload = {
+          id: currentProduct.id,
+          productDetails: currentProduct.title,
+          color: currentProduct.detailsType,
+          productCurrentAmount: currentProduct.productCurrentAmount,
+          deliveryDate: currentProduct.deliveryDate,
+          productImages: currentProduct.images,
+          size: selectedSize,
+          qty: quantity,
+          role: selectedRole,
+        };
+
+        if (existing) {
+          setPendingProduct(productPayload);
+          setShowPreorderDialog(false);
+          setShowConfirm(true);
+        } else {
+          dispatch(addToCart(productPayload));
+          setShowPreorderDialog(false);
+          // Show success message or redirect
+          router.push("/cart");
+        }
+      } else {
+        setError("Invalid preorder code. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error validating preorder code:", err);
+      setError("Something went wrong. Please try again later.");
     }
   };
+
   const confirmAdd = () => {
     if (pendingProduct) {
       dispatch(addToCart(pendingProduct));
@@ -165,7 +200,7 @@ const SmartRingDetails = ({ product }) => {
 
         {/* Glowing Orbs */}
         <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#5646a3] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob" />
-        <div className="absolute top-1/3 -right-48 w-96 h-96 bg-emerald-500 rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute top-1/3 -right-48 w-96 h-96 bg-[#585462] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
 
         <div className="container mx-auto relative z-10">
           {/* Premium Breadcrumb */}
@@ -185,29 +220,29 @@ const SmartRingDetails = ({ product }) => {
               }}
             >
               <a
-                href="/"
+                href="/NxRing"
                 className="text-gray-300 hover:text-white transition-colors"
               >
                 Home
               </a>
               <FaAngleRight className="text-gray-500 text-xs" />
               <a
-                href="/smart-ring"
+                href="/products"
                 className="text-gray-300 hover:text-white transition-colors"
               >
-                NexCura Smart Ring
+                Products
               </a>
               <FaAngleRight className="text-gray-500 text-xs" />
               <span className="text-white font-medium">Details</span>
             </div>
           </motion.div>{" "}
-          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-12 gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 px-4 sm:px-6 lg:px-8">
             {/* Image Gallery Section - Premium Carousel */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="lg:col-span-1 xl:col-span-4"
+              className="lg:col-span-1"
             >
               <div className="w-full max-w-lg mx-auto lg:mx-0">
                 {/* Main Image with Glassmorphism */}
@@ -223,7 +258,7 @@ const SmartRingDetails = ({ product }) => {
                   }}
                 >
                   {/* Hover Glow Effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-all duration-1000" />
+                  <div className="absolute -inset-1 bg-gradient-to-r from-[#5646a3] via-[#5646a3] to-[#585462] rounded-3xl blur-xl opacity-0 group-hover:opacity-40 transition-all duration-1000" />
 
                   <div className="relative aspect-square flex items-center justify-center p-8">
                     <AnimatePresence mode="wait">
@@ -259,7 +294,7 @@ const SmartRingDetails = ({ product }) => {
                       className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 z-20 cursor-pointer"
                       style={{
                         background:
-                          "linear-gradient(135deg, rgba(86, 70, 163, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%)",
+                          "linear-gradient(135deg, rgba(86, 70, 163, 0.9) 0%, rgba(88, 84, 98, 0.9) 100%)",
                         boxShadow: "0 8px 20px rgba(86, 70, 163, 0.4)",
                       }}
                     >
@@ -273,7 +308,7 @@ const SmartRingDetails = ({ product }) => {
                       className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full transition-all duration-300 z-20 cursor-pointer"
                       style={{
                         background:
-                          "linear-gradient(135deg, rgba(86, 70, 163, 0.9) 0%, rgba(147, 51, 234, 0.9) 100%)",
+                          "linear-gradient(135deg, rgba(86, 70, 163, 0.9) 0%, rgba(88, 84, 98, 0.9) 100%)",
                         boxShadow: "0 8px 20px rgba(86, 70, 163, 0.4)",
                       }}
                     >
@@ -335,7 +370,7 @@ const SmartRingDetails = ({ product }) => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:col-span-1 xl:col-span-5"
+              className="lg:col-span-1"
             >
               <div className="space-y-6">
                 {/* Product Title */}
@@ -343,9 +378,9 @@ const SmartRingDetails = ({ product }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-xl md:text-2xl font-black bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent leading-tight"
+                  className="text-3xl md:text-4xl font-black bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent leading-tight"
                 >
-                  {currentProduct.title}
+                  Buy NxRing
                 </motion.h1>
 
                 {/* Price Section with Premium Styling */}
@@ -356,37 +391,36 @@ const SmartRingDetails = ({ product }) => {
                   className="space-y-2"
                 >
                   <div className="flex items-baseline gap-4">
-                    <span className="text-4xl md:text-5xl font-black bg-gradient-to-r from-[#5646a3] to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-4xl md:text-5xl font-black bg-gradient-to-r from-[#5646a3] to-[#aeacaf] bg-clip-text text-transparent">
                       {currentProduct.price}
                     </span>
                     {currentProduct.oldPrice && (
-                      <span className="text-2xl text-gray-400 line-through font-medium">
+                      <span className="text-2xl text-[#aeacaf] line-through font-medium">
                         {currentProduct.oldPrice}
                       </span>
                     )}
                   </div>
                 </motion.div>
+
+                {/* Preorder Delivery Info */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="p-4 rounded-xl"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, rgba(86, 70, 163, 0.15) 0%, rgba(86, 70, 163, 0.1) 100%)",
+                    border: "1px solid rgba(86, 70, 163, 0.3)",
+                  }}
+                >
+                  <p className="text-sm text-[#fbf5ea] font-medium">
+                    📦 Preorders ship late December 2025. Exact delivery dates
+                    will be confirmed via email.
+                  </p>
+                </motion.div>
                 {currentProduct.type !== "sizingKit" && (
                   <>
-                    {/* Delivery Info */}
-                    {currentProduct.delivery && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.6 }}
-                        className="p-4 rounded-xl"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)",
-                          border: "1px solid rgba(16, 185, 129, 0.3)",
-                        }}
-                      >
-                        <p className="text-sm text-gray-200 font-medium">
-                          🚚 {currentProduct.delivery}
-                        </p>
-                      </motion.div>
-                    )}
-
                     {/* Color Selection */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -399,6 +433,11 @@ const SmartRingDetails = ({ product }) => {
                       </h3>
                       <div className="flex flex-wrap gap-3">
                         {currentProduct.colors?.map((color, index) => {
+                          // Define sold out colors
+                          const isSoldOut = color.name
+                            .toLowerCase()
+                            .includes("silver");
+
                           // Determine color-specific gradients
                           const getColorGradient = (colorName) => {
                             const name = colorName.toLowerCase();
@@ -453,7 +492,7 @@ const SmartRingDetails = ({ product }) => {
                             // Default purple
                             return {
                               active:
-                                "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
+                                "linear-gradient(135deg, #5646a3 0%, #585462 100%)",
                               shadow: "0 10px 30px rgba(86, 70, 163, 0.6)",
                               border: "1px solid rgba(255, 255, 255, 0.2)",
                             };
@@ -479,10 +518,19 @@ const SmartRingDetails = ({ product }) => {
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
                               transition={{ delay: 0.1 * index }}
-                              whileHover={{ scale: 1.05, y: -2 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => handleColorSelect(color)}
-                              className={`relative px-6 py-3 rounded-xl font-bold transition-all duration-300 cursor-pointer ${
+                              whileHover={
+                                !isSoldOut ? { scale: 1.05, y: -2 } : {}
+                              }
+                              whileTap={!isSoldOut ? { scale: 0.95 } : {}}
+                              onClick={() =>
+                                !isSoldOut && handleColorSelect(color)
+                              }
+                              disabled={isSoldOut}
+                              className={`relative px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
+                                isSoldOut
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
+                              } ${
                                 selectedColor === color.name
                                   ? getTextColor(color.name)
                                   : "text-gray-300"
@@ -503,7 +551,14 @@ const SmartRingDetails = ({ product }) => {
                               }
                             >
                               {color.name}
-                              {selectedColor === color.name && (
+                              {isSoldOut && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="text-red-500 text-4xl font-bold">
+                                    ✕
+                                  </span>
+                                </div>
+                              )}
+                              {selectedColor === color.name && !isSoldOut && (
                                 <motion.div
                                   layoutId="selectedColor"
                                   className="absolute inset-0 rounded-xl"
@@ -527,54 +582,73 @@ const SmartRingDetails = ({ product }) => {
                       className="space-y-4"
                     >
                       <h3 className="text-lg font-bold text-white">
-                        Selected Size:{" "}
-                        <span className="text-4xl text-[#9f8cff]">
+                        Size:{" "}
+                        <span className="text-4xl text-[#5646a3]">
                           {selectedSize}
                         </span>
                       </h3>
                       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
-                        {(currentProduct.sizes || []).map((size, index) => (
-                          <motion.button
-                            key={size}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.05 * index }}
-                            whileHover={{ scale: 1.1, y: -3 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setSelectedSize(size)}
-                            className={`aspect-square rounded-xl font-bold text-lg transition-all duration-300 cursor-pointer ${
-                              selectedSize === size
-                                ? "text-white"
-                                : "text-gray-300"
-                            }`}
-                            style={
-                              selectedSize === size
-                                ? {
-                                    background:
-                                      "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                                    boxShadow:
-                                      "0 8px 20px rgba(86, 70, 163, 0.4)",
-                                    border:
-                                      "2px solid rgba(255, 255, 255, 0.3)",
-                                  }
-                                : {
-                                    background:
-                                      "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                                    border:
-                                      "1px solid rgba(255, 255, 255, 0.2)",
-                                  }
-                            }
-                          >
-                            {size}
-                          </motion.button>
-                        ))}
+                        {(currentProduct.sizes || []).map((size, index) => {
+                          const isSoldOut = size === 6 || size === 7;
+                          return (
+                            <motion.button
+                              key={size}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.05 * index }}
+                              whileHover={
+                                !isSoldOut ? { scale: 1.1, y: -3 } : {}
+                              }
+                              whileTap={!isSoldOut ? { scale: 0.9 } : {}}
+                              onClick={() =>
+                                !isSoldOut && setSelectedSize(size)
+                              }
+                              disabled={isSoldOut}
+                              className={`relative aspect-square rounded-xl font-bold text-lg transition-all duration-300 ${
+                                isSoldOut
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
+                              } ${
+                                selectedSize === size
+                                  ? "text-white"
+                                  : "text-gray-300"
+                              }`}
+                              style={
+                                selectedSize === size
+                                  ? {
+                                      background:
+                                        "linear-gradient(135deg, #5646a3 0%, #585462 100%)",
+                                      boxShadow:
+                                        "0 8px 20px rgba(86, 70, 163, 0.4)",
+                                      border:
+                                        "2px solid rgba(255, 255, 255, 0.3)",
+                                    }
+                                  : {
+                                      background:
+                                        "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
+                                      border:
+                                        "1px solid rgba(255, 255, 255, 0.2)",
+                                    }
+                              }
+                            >
+                              {size}
+                              {isSoldOut && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className="text-red-500 text-3xl font-bold">
+                                    ✕
+                                  </span>
+                                </div>
+                              )}
+                            </motion.button>
+                          );
+                        })}
                       </div>
                     </motion.div>
                     <p className="text-sm text-gray-300 my-4">
                       Don’t know your ring size?{" "}
                       <button
                         onClick={() => setIsOpen(true)}
-                        className="text-pink-400 text-[1rem] cursor-pointer font-semibold underline"
+                        className="text-[#5646a3] text-[1rem] cursor-pointer font-semibold underline"
                       >
                         Click here
                       </button>
@@ -604,360 +678,24 @@ const SmartRingDetails = ({ product }) => {
                         </div>
                       </div>
                     )}
-                    <motion.div
+
+                    {/* Add to Cart Button */}
+                    <motion.button
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.9 }}
-                      className="space-y-4"
-                    >
-                      <h3 className="text-lg font-bold text-white">
-                        Select Role:
-                      </h3>
-                      <div className="flex flex-wrap gap-3">
-                        {currentProduct.role?.map((role, index) => (
-                          <motion.button
-                            key={role}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.05 * index }}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => setSelectedRole(role)}
-                            className={`relative px-8 py-3 rounded-xl font-bold transition-all duration-300 cursor-pointer ${
-                              selectedRole === role
-                                ? "text-white"
-                                : "text-gray-300"
-                            }`}
-                            style={
-                              selectedRole === role
-                                ? {
-                                    background:
-                                      "linear-gradient(135deg, #6C1B7A 0%, #9333ea 100%)",
-                                    boxShadow:
-                                      "0 10px 30px rgba(108, 27, 122, 0.5)",
-                                    border:
-                                      "1px solid rgba(255, 255, 255, 0.2)",
-                                  }
-                                : {
-                                    background:
-                                      "linear-gradient(135deg, rgba(108, 27, 122, 0.1) 0%, rgba(108, 27, 122, 0.05) 100%)",
-                                    border:
-                                      "1px solid rgba(255, 255, 255, 0.2)",
-                                  }
-                            }
-                          >
-                            {role}
-                            {selectedRole === role && (
-                              <motion.div
-                                layoutId="selectedRole"
-                                className="absolute inset-0 rounded-xl"
-                                style={{
-                                  background:
-                                    "linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%)",
-                                }}
-                              />
-                            )}
-                          </motion.button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-
-                {/* Premium Tabs Section - About & Specifications */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                  className="mt-8"
-                >
-                  {/* Tab Headers */}
-                  <div className="flex gap-2 mb-6">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setActiveTab("about")}
-                      className={`flex-1 py-4 px-6 rounded-2xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                        activeTab === "about" ? "text-white" : "text-gray-400"
-                      }`}
-                      style={
-                        activeTab === "about"
-                          ? {
-                              background:
-                                "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                              boxShadow: "0 8px 25px rgba(86, 70, 163, 0.5)",
-                              border: "1px solid rgba(255, 255, 255, 0.2)",
-                            }
-                          : {
-                              background:
-                                "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                              border: "1px solid rgba(255, 255, 255, 0.1)",
-                            }
-                      }
-                    >
-                      <FaInfoCircle className="text-lg" />
-                      About this item
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setActiveTab("specifications")}
-                      className={`flex-1 py-4 px-6 rounded-2xl font-bold text-base transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
-                        activeTab === "specifications"
-                          ? "text-white"
-                          : "text-gray-400"
-                      }`}
-                      style={
-                        activeTab === "specifications"
-                          ? {
-                              background:
-                                "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                              boxShadow: "0 8px 25px rgba(86, 70, 163, 0.5)",
-                              border: "1px solid rgba(255, 255, 255, 0.2)",
-                            }
-                          : {
-                              background:
-                                "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                              border: "1px solid rgba(255, 255, 255, 0.1)",
-                            }
-                      }
-                    >
-                      <BsDiamond className="text-lg" />
-                      Specifications
-                    </motion.button>
-                  </div>
-
-                  {/* Tab Content */}
-                  <AnimatePresence mode="wait">
-                    {activeTab === "about" && (
-                      <motion.div
-                        key="about"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className="p-6 rounded-3xl"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                          backdropFilter: "blur(10px)",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
-                        }}
-                      >
-                        <div className="space-y-4">
-                          {Object.entries(currentProduct.aboutThisItem).map(
-                            ([key, value], index) => (
-                              <motion.div
-                                key={key}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                className="flex items-start gap-4 group"
-                              >
-                                <div className="flex-shrink-0 mt-1">
-                                  <div
-                                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                    style={{
-                                      background:
-                                        "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
-                                      boxShadow:
-                                        "0 4px 15px rgba(86, 70, 163, 0.3)",
-                                    }}
-                                  >
-                                    <FaCheckCircle className="text-white text-lg" />
-                                  </div>
-                                </div>
-                                <p className="text-gray-200 text-base leading-relaxed pt-2 group-hover:text-white transition-colors">
-                                  {value}
-                                </p>
-                              </motion.div>
-                            )
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {activeTab === "specifications" &&
-                      currentProduct?.specifications && (
-                        <motion.div
-                          key="specifications"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3 }}
-                          className="p-6 rounded-3xl"
-                          style={{
-                            background:
-                              "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
-                            backdropFilter: "blur(10px)",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
-                          }}
-                        >
-                          <div className="space-y-4">
-                            {Object.entries(currentProduct.specifications).map(
-                              ([key, value], index) => (
-                                <motion.div
-                                  key={key}
-                                  initial={{ opacity: 0, x: -20 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: index * 0.1 }}
-                                  className="flex items-start gap-4 group"
-                                >
-                                  <div className="flex-shrink-0 mt-1">
-                                    <div
-                                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                      style={{
-                                        background:
-                                          "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                                        boxShadow:
-                                          "0 4px 15px rgba(16, 185, 129, 0.3)",
-                                      }}
-                                    >
-                                      <HiSparkles className="text-white text-lg" />
-                                    </div>
-                                  </div>
-                                  <p className="text-gray-200 text-base leading-relaxed pt-2 group-hover:text-white transition-colors">
-                                    {value}
-                                  </p>
-                                </motion.div>
-                              )
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                  </AnimatePresence>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Sticky Sidebar - Premium Cart Section */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="lg:col-span-1 xl:col-span-3"
-            >
-              <div className="lg:sticky lg:top-20 lg:self-start space-y-4">
-                {/* Main Price Card */}
-                <div
-                  className="group relative rounded-3xl overflow-hidden"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)",
-                    backdropFilter: "blur(30px)",
-                    boxShadow:
-                      "0 25px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
-                  }}
-                >
-                  {/* Animated Glow Effect */}
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-3xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-1000" />
-
-                  <div className="relative p-6 lg:p-8 space-y-6">
-                    {/* Price Display with Badge */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400 font-medium uppercase tracking-wider">
-                          Price
-                        </span>
-                        <div
-                          className="px-3 py-1 rounded-full text-xs font-bold"
-                          style={{
-                            background:
-                              "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-                            color: "white",
-                          }}
-                        >
-                          {currentProduct.oldPrice && (
-                            <>
-                              SAVE{" "}
-                              {Math.round(
-                                ((parseFloat(
-                                  currentProduct.oldPrice.replace(
-                                    /[^0-9.-]+/g,
-                                    ""
-                                  )
-                                ) -
-                                  parseFloat(
-                                    currentProduct.price.replace(
-                                      /[^0-9.-]+/g,
-                                      ""
-                                    )
-                                  )) /
-                                  parseFloat(
-                                    currentProduct.oldPrice.replace(
-                                      /[^0-9.-]+/g,
-                                      ""
-                                    )
-                                  )) *
-                                  100
-                              )}
-                              %
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-baseline gap-3">
-                        <span className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
-                          {currentProduct.price}
-                        </span>
-                      </div>
-                      {currentProduct.oldPrice && (
-                        <div className="flex items-center gap-2">
-                          <p className="text-xl text-gray-500 line-through font-medium">
-                            {currentProduct.oldPrice}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Add to Cart Button - Premium 3D Design */}
-                    <motion.button
-                      whileHover={{ scale: 1.03, y: -2 }}
+                      transition={{ delay: 1.3 }}
+                      whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={handleOrderNow}
-                      className="w-full py-4 px-6 rounded-xl font-bold text-lg text-white relative overflow-hidden cursor-pointer group"
+                      className="w-full py-4 px-6 rounded-xl font-bold text-lg text-white relative overflow-hidden cursor-pointer group mt-6"
                       style={{
-                        backgroundImage:
-                          "linear-gradient(135deg, #5646a3 0%, #9333ea 50%, #7c3aed 100%)",
-                        boxShadow:
-                          "0 10px 30px rgba(86, 70, 163, 0.6), " +
-                          "0 20px 60px rgba(147, 51, 234, 0.4), " +
-                          "inset 0 1px 0 rgba(255, 255, 255, 0.2), " +
-                          "inset 0 -8px 20px rgba(0, 0, 0, 0.3)",
-                        border: "1px solid rgba(124, 58, 237, 0.5)",
-                        transform: "translateZ(0)",
+                        backgroundColor: "#5646a3",
+                        boxShadow: "0 8px 20px rgba(86, 70, 163, 0.4)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
                       }}
                     >
-                      {/* 3D Light Reflection */}
-                      <div
-                        className="absolute inset-0 rounded-2xl opacity-50"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%)",
-                        }}
-                      />
-
-                      {/* Shimmer Effect */}
-                      <motion.div
-                        className="absolute inset-0 rounded-2xl"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%)",
-                        }}
-                        animate={{
-                          x: ["-200%", "200%"],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                      />
-
                       {/* Hover Glow */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-400/0 via-pink-400/30 to-purple-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl" />
+                      <div className="absolute inset-0 bg-[#585462] opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
 
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         <motion.div
@@ -987,52 +725,47 @@ const SmartRingDetails = ({ product }) => {
                       </span>
                     </motion.button>
 
-                    {/* Trust Badges with Icons */}
-                    <div className="space-y-3 pt-4 border-t border-gray-700/30">
-                      {[
-                        {
-                          Icon: BsShieldCheck,
-                          text: "Secure Payment",
-                          color: "#10b981",
-                        },
-                        {
-                          Icon: BsLightning,
-                          text: "Fast Delivery",
-                          color: "#f59e0b",
-                        },
-                        {
-                          Icon: BsDiamond,
-                          text: "Premium Quality",
-                          color: "#8b5cf6",
-                        },
-                      ].map((badge, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
-                          className="flex items-center gap-3 text-gray-300 group/badge cursor-default"
-                        >
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover/badge:scale-110"
-                            style={{
-                              background: `linear-gradient(135deg, ${badge.color}20 0%, ${badge.color}10 100%)`,
-                              border: `1px solid ${badge.color}40`,
-                            }}
+                    {/* What's Included Section */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.9 }}
+                      className="space-y-4"
+                    >
+                      <h3 className="text-xl font-bold text-white">
+                        What's Included
+                      </h3>
+                      <div
+                        className="p-6 rounded-2xl space-y-3"
+                        style={{
+                          background:
+                            "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
+                          backdropFilter: "blur(10px)",
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                        }}
+                      >
+                        {[
+                          "NxRing",
+                          "Charging Case",
+                          "One year subscription to NexCura Health Platform",
+                        ].map((item, idx) => (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 1.0 + idx * 0.1 }}
+                            className="flex items-center gap-3"
                           >
-                            <badge.Icon
-                              className="text-base"
-                              style={{ color: badge.color }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium tracking-wide">
-                            {badge.text}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                            <div className="flex-shrink-0">
+                              <FaCheckCircle className="text-[#5646a3] text-lg" />
+                            </div>
+                            <p className="text-gray-200 text-base">{item}</p>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
               </div>
             </motion.div>
           </div>
@@ -1056,17 +789,15 @@ const SmartRingDetails = ({ product }) => {
                   className="relative w-full max-w-md"
                 >
                   {/* Glow Effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-50" />
+                  <div className="absolute -inset-1 bg-[#5646a3] rounded-3xl blur-xl opacity-50" />
 
                   {/* Dialog Content */}
                   <div
                     className="relative rounded-3xl p-8 text-center"
                     style={{
-                      background:
-                        "linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(251, 245, 234, 0.95) 100%)",
+                      background: "rgba(255, 255, 255, 0.98)",
                       backdropFilter: "blur(20px)",
-                      boxShadow:
-                        "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 1)",
+                      boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4)",
                     }}
                   >
                     <h3 className="text-xl font-black text-[#5646a3] mb-4">
@@ -1082,10 +813,9 @@ const SmartRingDetails = ({ product }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={confirmAdd}
-                        className="px-6 py-3 rounded-xl font-bold text-white"
+                        className="px-6 py-3 rounded-xl font-bold text-white cursor-pointer"
                         style={{
-                          background:
-                            "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
+                          backgroundColor: "#5646a3",
                           boxShadow: "0 8px 20px rgba(86, 70, 163, 0.4)",
                         }}
                       >
@@ -1095,10 +825,9 @@ const SmartRingDetails = ({ product }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={cancelAdd}
-                        className="px-6 py-3 rounded-xl font-bold"
+                        className="px-6 py-3 rounded-xl font-bold cursor-pointer"
                         style={{
-                          background:
-                            "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(86, 70, 163, 0.05) 100%)",
+                          backgroundColor: "rgba(86, 70, 163, 0.1)",
                           border: "1px solid rgba(86, 70, 163, 0.2)",
                           color: "#5646a3",
                         }}
@@ -1106,6 +835,169 @@ const SmartRingDetails = ({ product }) => {
                         Cancel
                       </motion.button>
                     </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* Preorder Code Dialog */}
+          <AnimatePresence>
+            {showPreorderDialog && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[9999] flex items-center justify-center px-4"
+                style={{
+                  background: "rgba(0, 13, 36, 0.85)",
+                  backdropFilter: "blur(20px)",
+                }}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.9, y: 20 }}
+                  transition={{ type: "spring", duration: 0.5 }}
+                  className="relative w-full max-w-md"
+                >
+                  {/* Glow Effect */}
+                  <div className="absolute -inset-1 bg-[#5646a3] rounded-3xl blur-xl opacity-50" />
+
+                  {/* Dialog Content */}
+                  <div
+                    className="relative rounded-3xl p-8 md:p-10"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.98)",
+                      backdropFilter: "blur(20px)",
+                      boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4)",
+                      border: "1px solid rgba(255, 255, 255, 0.5)",
+                    }}
+                  >
+                    {/* Close Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setShowPreorderDialog(false)}
+                      className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer"
+                      style={{
+                        backgroundColor: "rgba(86, 70, 163, 0.1)",
+                        border: "1px solid rgba(86, 70, 163, 0.2)",
+                      }}
+                    >
+                      <span className="text-2xl font-bold text-[#5646a3]">
+                        ×
+                      </span>
+                    </motion.button>
+
+                    {/* Icon */}
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.2, type: "spring" }}
+                      className="flex justify-center mb-6"
+                    >
+                      <div
+                        className="p-4 rounded-2xl"
+                        style={{
+                          backgroundColor: "#5646a3",
+                          boxShadow: "0 10px 30px rgba(86, 70, 163, 0.4)",
+                        }}
+                      >
+                        <GiSmartphone className="w-8 h-8 text-white" />
+                      </div>
+                    </motion.div>
+
+                    {/* Title */}
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-2xl md:text-3xl font-black text-center mb-3 text-[#5646a3]"
+                    >
+                      Enter Pre-Order Code
+                    </motion.h2>
+
+                    {/* Description */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-center text-gray-700 mb-6 text-base"
+                    >
+                      Enter the code to proceed with your smart ring pre-order.
+                    </motion.p>
+
+                    {/* Form */}
+                    <form onSubmit={handlePreorderSubmit} className="space-y-4">
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <input
+                          type="text"
+                          value={preorderCode}
+                          onChange={(e) => setPreorderCode(e.target.value)}
+                          placeholder="Enter your pre-order code"
+                          className="w-full px-6 py-4 rounded-2xl text-gray-900 font-medium focus:outline-none focus:ring-2 transition-all duration-300"
+                          style={{
+                            background: "rgba(255, 255, 255, 0.8)",
+                            border: "2px solid rgba(86, 70, 163, 0.2)",
+                            boxShadow: "inset 0 2px 8px rgba(0, 0, 0, 0.05)",
+                          }}
+                          autoFocus
+                        />
+                      </motion.div>
+
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="p-4 rounded-xl"
+                          style={{
+                            backgroundColor: "rgba(239, 68, 68, 0.1)",
+                            border: "1px solid rgba(239, 68, 68, 0.2)",
+                          }}
+                        >
+                          <p className="text-red-600 text-sm font-medium text-center">
+                            {error}
+                          </p>
+                        </motion.div>
+                      )}
+
+                      <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="submit"
+                        className="w-full py-4 px-8 rounded-2xl font-bold text-lg text-white relative overflow-hidden group cursor-pointer"
+                        style={{
+                          backgroundColor: "#5646a3",
+                          boxShadow: "0 10px 30px rgba(86, 70, 163, 0.4)",
+                        }}
+                      >
+                        <span className="relative z-10">Proceed</span>
+                        <div className="absolute inset-0 bg-[#585462] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </motion.button>
+                    </form>
+
+                    {/* Additional Info */}
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.7 }}
+                      className="text-center text-sm text-gray-600 mt-6"
+                    >
+                      Don't have a code?{" "}
+                      <a
+                        href="/NxRing"
+                        className="text-[#5646a3] font-bold hover:underline"
+                      >
+                        Go back
+                      </a>
+                    </motion.p>
                   </div>
                 </motion.div>
               </motion.div>

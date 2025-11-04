@@ -2,79 +2,58 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FaPlay, FaPause, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function VideoCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const slides = [
     {
       id: 1,
-      video: "/videos/01.mov",
-      title: "No limits. Not even water.",
-      subtitle: "Active Lifestyle",
+      video: "/videos/slider1.mp4",
+      title: "Track your wellness",
+      subtitle: "Wellness Monitor",
       description:
-        "You're maintaining an active lifestyle. Keep up the great work and aim to challenge yourself further.",
+        "Monitor your daily health metrics to stay in sync with your body.",
       position: "left",
-      productUrl: "/products/waterproof-watch",
     },
     {
       id: 2,
-      video: "/videos/02.mov",
+      video: "/videos/slider2.mp4",
       title: "Track every heartbeat. Even while you sleep.",
-      subtitle: "Sleep Tracking",
+      subtitle: "Personalized Diagnostics",
       description:
-        "You're getting good sleep. Keep it up to feel more energized tomorrow.",
+        "Track your symptoms, health inputs, and medical tests in one place",
       position: "right",
-      productUrl: "/products/sleep-tracker",
     },
     {
       id: 3,
-      video: "/videos/03.mov",
+      video: "/videos/slider3.mp4",
       title: "Move better. Live stronger.",
-      subtitle: "Fitness Goals",
+      subtitle: "Stay Connected",
       description:
-        "Push your boundaries and keep your rhythm aligned with your goals.",
+        "Keep your loved ones informed through shared wellness updates and connected care.",
       position: "left",
-      productUrl: "/products/fitness-watch",
     },
     {
       id: 4,
-      video: "/videos/04.mov",
+      video: "/videos/slider4.mp4",
       title: "Every breath counts.",
-      subtitle: "Wellness Monitor",
-      description: "Monitor your wellness and find balance every day.",
+      subtitle: "Nutrition Goals",
+      description:
+        "Track your meals and receive smart food suggestions that support your health journey.",
       position: "right",
-      productUrl: "/products/wellness-tracker",
     },
-    {
-      id: 5,
-      video: "/videos/05.mov",
-      title: "Your journey. Perfected.",
-      subtitle: "Stay Connected",
-      description: "Stay consistent. Stay connected. Keep evolving.",
-      position: "left",
-      productUrl: "/products/smartwatch-pro",
-    },
-  ];
-
-  // Fixed particle positions
-  const particlePositions = [
-    { left: 15.2, top: 20.5 },
-    { left: 85.3, top: 15.8 },
-    { left: 25.6, top: 75.2 },
-    { left: 70.4, top: 85.1 },
-    { left: 45.8, top: 10.3 },
-    { left: 90.2, top: 55.7 },
-    { left: 10.5, top: 65.4 },
-    { left: 55.3, top: 40.2 },
-    { left: 35.7, top: 90.6 },
-    { left: 78.9, top: 25.3 },
-    { left: 20.1, top: 50.8 },
-    { left: 95.4, top: 70.2 },
-    { left: 50.2, top: 5.9 },
-    { left: 65.8, top: 95.1 },
-    { left: 5.3, top: 35.7 },
+    // {
+    //   id: 5,
+    //   video: "/videos/05.mov",
+    //   title: "Your journey. Perfected.",
+    //   subtitle: "Stay Connected",
+    //   description: "Stay consistent. Stay connected. Keep evolving.",
+    //   position: "left",
+    // },
   ];
 
   useEffect(() => {
@@ -82,15 +61,29 @@ export default function VideoCarousel() {
   }, []);
 
   useEffect(() => {
+    if (!isPlaying) return;
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 8000);
 
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, [slides.length, isPlaying]);
 
-  const handleBuyNow = (productUrl) => {
-    window.location.href = productUrl;
+  const handleBuyNow = () => {
+    window.location.href = "/products";
+  };
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const handlePrevious = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
   };
 
   const getPositionClasses = (position) => {
@@ -197,32 +190,6 @@ export default function VideoCarousel() {
             <div className="absolute inset-0 bg-gradient-to-t from-[#000d24]/80 via-transparent to-[#000d24]/40" />
             <div className="absolute inset-0 bg-[#5646a3]/10" />
           </div>
-
-          {/* Floating particles */}
-          {isMounted && (
-            <div className="absolute inset-0 z-[2] pointer-events-none">
-              {particlePositions.map((pos, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1 h-1 bg-[#fbf5ea] rounded-full opacity-30"
-                  style={{
-                    left: `${pos.left}%`,
-                    top: `${pos.top}%`,
-                  }}
-                  animate={{
-                    y: [0, -30, 0],
-                    opacity: [0.2, 0.5, 0.2],
-                    scale: [1, 1.5, 1],
-                  }}
-                  transition={{
-                    duration: 3 + (i % 3),
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                  }}
-                />
-              ))}
-            </div>
-          )}
 
           {/* Content Container - using Tailwind container with header spacing */}
           <div className="relative z-10 h-full pt-20 md:pt-24 pb-20">
@@ -342,9 +309,7 @@ export default function VideoCarousel() {
                           boxShadow: "0 0 40px rgba(86, 70, 163, 0.8)",
                         }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() =>
-                          handleBuyNow(slides[currentSlide].productUrl)
-                        }
+                        onClick={handleBuyNow}
                         className="relative group overflow-hidden px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base text-[#fbf5ea] shadow-2xl transition-all duration-300 cursor-pointer"
                         style={{
                           background:
@@ -367,7 +332,7 @@ export default function VideoCarousel() {
                           />
                         )}
                         <span className="relative z-10 flex items-center gap-2">
-                          Buy Now
+                          Preorder Now
                           <motion.span
                             animate={{ x: [0, 5, 0] }}
                             transition={{ duration: 1.5, repeat: Infinity }}
@@ -385,26 +350,62 @@ export default function VideoCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Progress Indicator */}
-      <div className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex gap-2 sm:gap-3 z-20 pointer-events-none">
-        {slides.map((_, index) => (
-          <motion.div key={index} className="relative">
-            {index === currentSlide && isMounted && (
-              <motion.div
-                className="absolute inset-0 bg-[#5646a3] rounded-full blur-md"
-                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0.8, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              />
-            )}
-            <div
-              className={`relative h-1.5 sm:h-2 rounded-full transition-all duration-500 ${
-                index === currentSlide
-                  ? "w-8 sm:w-10 bg-gradient-to-r from-[#5646a3] to-[#7d6bc7]"
-                  : "w-1.5 sm:w-2 bg-[#aeacaf]/40"
-              }`}
-            />
-          </motion.div>
-        ))}
+      {/* Navigation Controls */}
+      <div className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-3 sm:gap-4 z-20">
+        {/* Previous Button */}
+        <motion.button
+          onClick={handlePrevious}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-[#fbf5ea] transition-all duration-300 cursor-pointer"
+          style={{
+            background: "rgba(86, 70, 163, 0.8)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(251, 245, 234, 0.3)",
+            boxShadow: "0 4px 16px rgba(86, 70, 163, 0.4)",
+          }}
+          aria-label="Previous slide"
+        >
+          <FaChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+        </motion.button>
+
+        {/* Play/Pause Button */}
+        <motion.button
+          onClick={togglePlayPause}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-[#fbf5ea] transition-all duration-300 cursor-pointer"
+          style={{
+            background: "rgba(86, 70, 163, 0.8)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(251, 245, 234, 0.3)",
+            boxShadow: "0 4px 16px rgba(86, 70, 163, 0.4)",
+          }}
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? (
+            <FaPause className="w-4 h-4 sm:w-5 sm:h-5" />
+          ) : (
+            <FaPlay className="w-4 h-4 sm:w-5 sm:h-5 ml-0.5" />
+          )}
+        </motion.button>
+
+        {/* Next Button */}
+        <motion.button
+          onClick={handleNext}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-[#fbf5ea] transition-all duration-300 cursor-pointer"
+          style={{
+            background: "rgba(86, 70, 163, 0.8)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(251, 245, 234, 0.3)",
+            boxShadow: "0 4px 16px rgba(86, 70, 163, 0.4)",
+          }}
+          aria-label="Next slide"
+        >
+          <FaChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+        </motion.button>
       </div>
 
       {/* Slide counter */}

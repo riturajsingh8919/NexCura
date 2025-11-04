@@ -23,96 +23,98 @@ export default function RootLayout({ children }) {
       {
         "@type": "Organization",
         "@id": "https://www.genaihealth.care/#organization",
-        "name": "GenAI Healthcare",
-        "url": "https://www.genaihealth.care/",
-        "logo": "https://www.genaihealth.care/path-to-logo.png",
-        "sameAs": [
+        name: "GenAI Healthcare",
+        url: "https://www.genaihealth.care/",
+        logo: "https://www.genaihealth.care/path-to-logo.png",
+        sameAs: [
           "https://www.linkedin.com/company/gen-ai-healthcare",
-          "https://www.facebook.com/Genai-Healthcare"
+          "https://www.facebook.com/Genai-Healthcare",
         ],
-        "contactPoint": [
+        contactPoint: [
           {
             "@type": "ContactPoint",
-            "telephone": "+1-404-777-6636",
-            "contactType": "customer service",
-            "areaServed": "USA",
-            "availableLanguage": ["en"]
-          }
+            telephone: "+1-404-777-6636",
+            contactType: "customer service",
+            areaServed: "USA",
+            availableLanguage: ["en"],
+          },
         ],
-        "description": "GenAI Healthcare: Advanced healthcare through cutting-edge AI-driven solutions."
+        description:
+          "GenAI Healthcare: Advanced healthcare through cutting-edge AI-driven solutions.",
       },
       {
         "@type": "WebSite",
         "@id": "https://www.genaihealth.care/#website",
-        "url": "https://www.genaihealth.care/",
-        "name": "GenAI Healthcare",
-        "publisher": {
-          "@id": "https://www.genaihealth.care/#organization"
+        url: "https://www.genaihealth.care/",
+        name: "GenAI Healthcare",
+        publisher: {
+          "@id": "https://www.genaihealth.care/#organization",
         },
-        "inLanguage": "en",
-        "potentialAction": {
+        inLanguage: "en",
+        potentialAction: {
           "@type": "SearchAction",
-          "target": "https://www.genaihealth.care/?s={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+          target: "https://www.genaihealth.care/?s={search_term_string}",
+          "query-input": "required name=search_term_string",
+        },
       },
       {
         "@type": "BreadcrumbList",
         "@id": "https://www.genaihealth.care/#breadcrumb",
-        "itemListElement": [
+        itemListElement: [
           {
             "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://www.genaihealth.care/"
-          }
-        ]
+            position: 1,
+            name: "Home",
+            item: "https://www.genaihealth.care/",
+          },
+        ],
       },
       {
         "@type": "Person",
         "@id": "https://www.genaihealth.care/clinical-team#person1",
-        "name": "Dr. Daniel Botelho",
-        "jobTitle": "Chief Medical Officer",
-        "affiliation": {
-          "@id": "https://www.genaihealth.care/team-overview"
-        }
+        name: "Dr. Daniel Botelho",
+        jobTitle: "Chief Medical Officer",
+        affiliation: {
+          "@id": "https://www.genaihealth.care/team-overview",
+        },
       },
       {
         "@type": "Person",
         "@id": "https://www.genaihealth.care/clinical-team#person2",
-        "name": "Felice Felser",
-        "jobTitle": "MSN Advisory Product & Clinical Strategy",
-        "affiliation": {
-          "@id": "https://www.genaihealth.care/team-overview"
-        }
+        name: "Felice Felser",
+        jobTitle: "MSN Advisory Product & Clinical Strategy",
+        affiliation: {
+          "@id": "https://www.genaihealth.care/team-overview",
+        },
       },
       {
         "@type": "Person",
         "@id": "https://www.genaihealth.care/clinical-team#person3",
-        "name": "Dr. Srividhya Karunanithi",
-        "jobTitle": "Senior Clinical Research Scientist",
-        "affiliation": {
-          "@id": "https://www.genaihealth.care/team-overview"
-        }
+        name: "Dr. Srividhya Karunanithi",
+        jobTitle: "Senior Clinical Research Scientist",
+        affiliation: {
+          "@id": "https://www.genaihealth.care/team-overview",
+        },
       },
       {
         "@type": "Person",
         "@id": "https://www.genaihealth.care/clinical-team#person4",
-        "name": "Dr. Dhanya Vijayakumar",
-        "jobTitle": "Advisor - Clinical Solutions",
-        "affiliation": {
-          "@id": "https://www.genaihealth.care/team-overview"
-        }
-      }
-    ]
+        name: "Dr. Dhanya Vijayakumar",
+        jobTitle: "Advisor - Clinical Solutions",
+        affiliation: {
+          "@id": "https://www.genaihealth.care/team-overview",
+        },
+      },
+    ],
   };
 
   return (
-    <html lang="en">
-      <head>
+    <html lang="en" suppressHydrationWarning>
+      <head suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          suppressHydrationWarning
         />
 
         {/* Google Analytics */}
@@ -161,4 +163,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-  

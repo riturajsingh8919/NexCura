@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GiSmartphone } from "react-icons/gi";
 import { HiOutlineShoppingCart } from "react-icons/hi";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
@@ -58,7 +59,7 @@ export default function Header() {
             >
               <Link
                 href="/"
-                className={`flex items-center gap-2.5 md:gap-3 px-5 md:px-6 py-2.5 md:py-3 rounded-full group transition-all duration-300 ${
+                className={`flex items-center gap-2.5 md:gap-3 px-5 md:px-6 pt-2.5 pb-1.5 md:pt-3 md:pb-2 rounded-full group transition-all duration-300 ${
                   scrolled ? "shadow-xl" : "shadow-lg"
                 }`}
                 style={{
@@ -73,35 +74,13 @@ export default function Header() {
                     : "0 4px 24px rgba(86, 70, 163, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
                 }}
               >
-                {/* Icon */}
-                <div className="relative">
-                  {isMounted && (
-                    <motion.div className="absolute inset-0 bg-[#fbf5ea] rounded-full blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300" />
-                  )}
-                  <div
-                    className="relative p-2 md:p-2.5 rounded-full"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #fbf5ea 0%, #ffffff 100%)",
-                    }}
-                  >
-                    <GiSmartphone className="w-4 h-4 md:w-5 md:h-5 text-[#5646a3]" />
-                  </div>
-                </div>
-
-                {/* Logo Text */}
-                <span
-                  className="text-xl md:text-2xl lg:text-3xl font-black tracking-tight transition-all duration-300 group-hover:scale-105"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #fbf5ea 0%, #ffffff 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  NexRing
-                </span>
+                <Image
+                  src="/logo-nxring.png"
+                  alt="Logo"
+                  width={1400}
+                  height={350}
+                  className="w-[150px] h-auto object-contain"
+                />
               </Link>
             </motion.div>
 

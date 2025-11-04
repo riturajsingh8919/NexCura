@@ -21,7 +21,7 @@ const CartPage = () => {
   );
   const deliveryDate = items.length > 0 ? items[0].deliveryDate : null;
 
-  const handleAddAnotherRing = () => router.push(`/smart-ring`);
+  const handleAddAnotherRing = () => router.push(`/products`);
 
   const handleProceedToPay = async () => {
     if (typeof window !== "undefined") {
@@ -70,7 +70,7 @@ const CartPage = () => {
 
           {/* Glowing Orbs */}
           <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#5646a3] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob" />
-          <div className="absolute top-1/3 -right-48 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
+          <div className="absolute top-1/3 -right-48 w-96 h-96 bg-[#585462] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
 
           <div className="relative flex flex-col items-center justify-center px-6 md:px-24 py-32 text-center">
             <motion.div
@@ -84,7 +84,7 @@ const CartPage = () => {
                 className="p-12 rounded-3xl backdrop-blur-xl"
                 style={{
                   background:
-                    "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%)",
+                    "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(88, 84, 98, 0.05) 100%)",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
                 }}
@@ -130,15 +130,14 @@ const CartPage = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-8 py-3 rounded-xl font-bold text-white cursor-pointer relative overflow-hidden group"
-                  onClick={() => router.push("/smart-ring")}
+                  onClick={() => router.push("/products")}
                   style={{
-                    background:
-                      "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
+                    backgroundColor: "#5646a3",
                     boxShadow: "0 10px 30px rgba(86, 70, 163, 0.4)",
                   }}
                 >
                   <span className="relative z-10">Start Shopping</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-[#585462] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.button>
               </div>
             </motion.div>
@@ -156,7 +155,7 @@ const CartPage = () => {
 
         {/* Glowing Orbs */}
         <div className="absolute top-1/4 -left-48 w-96 h-96 bg-[#5646a3] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob" />
-        <div className="absolute top-1/3 -right-48 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute top-1/3 -right-48 w-96 h-96 bg-[#585462] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-blob animation-delay-2000" />
 
         <div className="relative px-4 sm:px-8 md:px-16 lg:px-24 py-16 md:py-28">
           {/* Breadcrumb with Glass Effect */}
@@ -222,7 +221,7 @@ const CartPage = () => {
                     className="group relative"
                   >
                     {/* Subtle Glow Effect on Hover */}
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] to-purple-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] to-[#585462] rounded-2xl blur-lg opacity-0 group-hover:opacity-30 transition-all duration-500" />
 
                     {/* Card */}
                     <div
@@ -260,37 +259,37 @@ const CartPage = () => {
                               onClick={() =>
                                 router.push(`/smartRingDetails/${item.id}`)
                               }
-                              className="font-bold text-xl cursor-pointer hover:text-purple-300 transition-colors mb-4"
+                              className="font-bold text-xl cursor-pointer hover:text-[#aeacaf] transition-colors mb-4"
                             >
                               {item.productDetails}
                             </h2>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#5646a3] to-purple-500" />
+                                <div className="w-2 h-2 rounded-full bg-[#5646a3]" />
                                 <span className="text-gray-400">Price:</span>
                                 <span className="font-bold text-white">
                                   ${item.productCurrentAmount}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#5646a3] to-purple-500" />
+                                <div className="w-2 h-2 rounded-full bg-[#5646a3]" />
                                 <span className="text-gray-400">Color:</span>
                                 <span className="font-semibold text-white">
                                   {item.color}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-[#5646a3] to-purple-500" />
+                                <div className="w-2 h-2 rounded-full bg-[#5646a3]" />
                                 <span className="text-gray-400">Size:</span>
                                 <span className="font-semibold text-white">
                                   {item.size}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 sm:col-span-2">
-                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
+                                <div className="w-2 h-2 rounded-full bg-[#5646a3]" />
                                 <span className="text-gray-400">Delivery:</span>
-                                <span className="font-semibold text-emerald-300 text-xs">
+                                <span className="font-semibold text-[#aeacaf] text-xs">
                                   by {item.deliveryDate}
                                 </span>
                               </div>
@@ -334,14 +333,14 @@ const CartPage = () => {
             >
               <div className="sticky top-24">
                 {/* Glow Effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] to-purple-500 rounded-2xl blur-lg opacity-30" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] to-[#585462] rounded-2xl blur-lg opacity-30" />
 
                 {/* Summary Card */}
                 <div
                   className="relative rounded-2xl backdrop-blur-xl p-6"
                   style={{
                     background:
-                      "linear-gradient(135deg, rgba(86, 70, 163, 0.15) 0%, rgba(147, 51, 234, 0.1) 100%)",
+                      "linear-gradient(135deg, rgba(86, 70, 163, 0.15) 0%, rgba(88, 84, 98, 0.1) 100%)",
                     border: "1px solid rgba(255, 255, 255, 0.2)",
                     boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4)",
                   }}
@@ -369,8 +368,8 @@ const CartPage = () => {
                     className="mb-6 p-4 rounded-xl"
                     style={{
                       background:
-                        "linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)",
-                      border: "1px solid rgba(16, 185, 129, 0.2)",
+                        "linear-gradient(135deg, rgba(86, 70, 163, 0.1) 0%, rgba(88, 84, 98, 0.05) 100%)",
+                      border: "1px solid rgba(86, 70, 163, 0.2)",
                     }}
                   >
                     <div className="flex items-start gap-2">
@@ -379,7 +378,7 @@ const CartPage = () => {
                         <p className="text-xs text-gray-400 mb-1">
                           Estimated Delivery
                         </p>
-                        <p className="text-sm font-bold text-emerald-300">
+                        <p className="text-sm font-bold text-[#aeacaf]">
                           {deliveryDate}
                         </p>
                       </div>
@@ -398,7 +397,7 @@ const CartPage = () => {
                     </div>
                     <div className="flex justify-between py-2">
                       <span className="text-gray-400">Payment</span>
-                      <span className="text-emerald-300 font-semibold flex items-center gap-1">
+                      <span className="text-[#5646a3] font-semibold flex items-center gap-1">
                         <svg
                           className="w-3 h-3"
                           fill="currentColor"
@@ -423,13 +422,12 @@ const CartPage = () => {
                       className="w-full py-3 px-6 rounded-xl font-bold text-white cursor-pointer relative overflow-hidden group"
                       onClick={handleProceedToPay}
                       style={{
-                        background:
-                          "linear-gradient(135deg, #5646a3 0%, #9333ea 100%)",
+                        backgroundColor: "#5646a3",
                         boxShadow: "0 10px 30px rgba(86, 70, 163, 0.5)",
                       }}
                     >
                       <span className="relative z-10">Proceed to Pay</span>
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute inset-0 bg-[#585462] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </motion.button>
 
                     <motion.button
@@ -462,10 +460,10 @@ const CartPage = () => {
             >
               <div className="relative">
                 {/* Outer Glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#5646a3] via-purple-500 to-pink-500 rounded-full blur-2xl opacity-50 animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#5646a3] via-[#585462] to-[#5646a3] rounded-full blur-2xl opacity-50 animate-pulse" />
 
                 {/* Spinner */}
-                <div className="relative w-16 h-16 border-4 border-transparent border-t-[#5646a3] border-r-purple-400 rounded-full animate-spin"></div>
+                <div className="relative w-16 h-16 border-4 border-transparent border-t-[#5646a3] border-r-[#aeacaf] rounded-full animate-spin"></div>
 
                 {/* Loading Text */}
                 <p className="text-white text-sm font-semibold mt-4 text-center">
