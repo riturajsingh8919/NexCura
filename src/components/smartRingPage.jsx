@@ -76,7 +76,7 @@ export default function SmartRingPage() {
         <Header />
 
         {/* Hero Section with Premium Glassmorphism */}
-        <section className="relative px-4 sm:px-6 lg:px-8 py-16 md:py-24 overflow-hidden">
+        <section className="relative min-h-[80vh] px-4 sm:px-6 lg:px-8 py-16 md:py-24 overflow-hidden flex flex-col justify-center">
           {/* Breadcrumb with Glass Effect */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -85,10 +85,9 @@ export default function SmartRingPage() {
             className="container mx-auto"
           >
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm my-8 md:my-0"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm my-8 md:my-0 md:mb-8"
               style={{
-                background:
-                  "linear-gradient(135deg, rgba(86, 70, 163, 0.2) 0%, rgba(86, 70, 163, 0.1) 100%)",
+                backgroundColor: "rgba(86, 70, 163, 0.2)",
                 backdropFilter: "blur(20px)",
                 border: "1px solid rgba(255, 255, 255, 0.1)",
               }}
@@ -120,13 +119,9 @@ export default function SmartRingPage() {
                   transition={{ duration: 0.8, delay: 0.4 }}
                   className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight"
                 >
-                  <span className="bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
-                    Smarter insights.
-                  </span>
+                  <span className="text-[#fbf5ea]">Smarter insights.</span>
                   <br />
-                  <span className="bg-gradient-to-r from-[#5646a3] via-[#aeacaf] to-[#5646a3] bg-clip-text text-transparent">
-                    Stronger you.
-                  </span>
+                  <span className="text-[#5646a3]">Stronger you.</span>
                 </motion.h1>
 
                 {/* Description with Glass Background */}
@@ -163,7 +158,7 @@ export default function SmartRingPage() {
                   <div className="absolute inset-0 bg-gradient-radial from-[#5646a3]/40 via-[#5646a3]/20 to-transparent rounded-full blur-3xl scale-150" />
 
                   <img
-                    src="/images/smart_ring_img.svg"
+                    src="/updated-ring.png"
                     alt="Smart Ring"
                     className="relative w-[300px] sm:w-[400px] md:w-[500px] lg:w-[600px] object-contain drop-shadow-2xl"
                   />
@@ -184,7 +179,7 @@ export default function SmartRingPage() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 text-[#fbf5ea]">
                 Pre-Order Available Now
               </h2>
             </motion.div>
@@ -206,14 +201,13 @@ export default function SmartRingPage() {
                   >
                     <div className="group relative">
                       {/* Subtle Glow Effect */}
-                      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#5646a3] via-[#5646a3] to-[#585462] rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
+                      <div className="absolute -inset-0.5 bg-[#5646a3] rounded-2xl blur-xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
 
                       {/* Compact Modern Card */}
                       <div
                         className="relative rounded-2xl overflow-hidden backdrop-blur-lg"
                         style={{
-                          background:
-                            "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)",
+                          background: "rgba(255, 255, 255, 0.05)",
                           border: "1px solid rgba(255, 255, 255, 0.1)",
                           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
                         }}
@@ -224,7 +218,10 @@ export default function SmartRingPage() {
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="md:col-span-2 bg-gradient-to-br from-[#5646a3]/10 to-[#585462]/10 flex items-center justify-center p-6 md:p-8"
+                            className="md:col-span-2 flex items-center justify-center p-6 md:p-8"
+                            style={{
+                              backgroundColor: "rgba(86, 70, 163, 0.1)",
+                            }}
                           >
                             <motion.div
                               whileHover={{ scale: 1.08, rotateZ: 3 }}
@@ -257,7 +254,7 @@ export default function SmartRingPage() {
 
                             {/* Compact Price */}
                             <div className="flex items-baseline gap-3">
-                              <span className="text-3xl md:text-4xl font-black bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                              <span className="text-3xl md:text-4xl font-black text-white">
                                 {products[0].currencySymbol}
                                 {products[0].productCurrentAmount}
                               </span>
@@ -302,16 +299,6 @@ export default function SmartRingPage() {
                               ))}
                             </div>
 
-                            {/* Delivery Badge */}
-                            {products[0].deliveryDate && (
-                              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#5646a3]/10 border border-[#5646a3]/20 rounded-lg w-fit">
-                                <span className="text-sm">🚚</span>
-                                <span className="text-xs text-[#aeacaf] font-semibold">
-                                  Delivery by {products[0].deliveryDate}
-                                </span>
-                              </div>
-                            )}
-
                             {/* Compact CTA Button */}
                             <motion.button
                               onClick={handleOrderNowClick}
@@ -319,8 +306,7 @@ export default function SmartRingPage() {
                               whileTap={{ scale: 0.98 }}
                               className="w-full py-3 px-6 rounded-lg font-bold text-base text-white relative overflow-hidden cursor-pointer group/btn"
                               style={{
-                                background:
-                                  "linear-gradient(135deg, #5646a3 0%, #585462 100%)",
+                                backgroundColor: "#5646a3",
                                 boxShadow: "0 4px 20px rgba(86, 70, 163, 0.4)",
                               }}
                             >
@@ -337,7 +323,7 @@ export default function SmartRingPage() {
                                   →
                                 </motion.span>
                               </span>
-                              <div className="absolute inset-0 bg-gradient-to-r from-[#5646a3] to-[#585462] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                              <div className="absolute inset-0 bg-[#585462] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
                             </motion.button>
                           </motion.div>
                         </div>

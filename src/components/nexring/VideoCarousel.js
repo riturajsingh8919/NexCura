@@ -40,7 +40,7 @@ export default function VideoCarousel() {
     {
       id: 4,
       video: "/videos/slider4.mp4",
-      title: "Every breath counts.",
+      title: "Personalized Nutrition",
       subtitle: "Nutrition Goals",
       description:
         "Track your meals and receive smart food suggestions that support your health journey.",
