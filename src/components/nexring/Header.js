@@ -58,7 +58,7 @@ export default function Header() {
               transition={{ duration: 0.6 }}
             >
               <Link
-                href="/"
+                href="/NxRing"
                 className={`flex items-center gap-2.5 md:gap-3 px-5 md:px-6 pt-2.5 pb-1.5 md:pt-3 md:pb-2 rounded-full group transition-all duration-300 ${
                   scrolled ? "shadow-xl" : "shadow-lg"
                 }`}
