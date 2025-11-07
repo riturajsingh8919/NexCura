@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import {
   IoLogoFacebook,
   IoLogoTwitter,
@@ -10,10 +11,78 @@ import {
   IoLogoLinkedin,
   IoLogoYoutube,
   IoArrowForward,
+  IoCheckmarkCircle,
+  IoAlertCircle,
 } from "react-icons/io5";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  // Newsletter subscription state
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // 'success' or 'error'
+
+  // Handle newsletter subscription
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      setMessage("Please enter your email address");
+      setMessageType("error");
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage("Please enter a valid email address");
+      setMessageType("error");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          honeypot: "", // Empty honeypot field for legitimate users
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMessage(
+          "🎉 Successfully subscribed! Check your email for confirmation."
+        );
+        setMessageType("success");
+        setEmail(""); // Clear the input
+      } else {
+        setMessage(data.error || "Subscription failed. Please try again.");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      setMessage("Network error. Please check your connection and try again.");
+      setMessageType("error");
+    } finally {
+      setIsSubmitting(false);
+
+      // Clear message after 5 seconds
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
+    }
+  };
 
   const legalLinks = [
     {
@@ -111,34 +180,117 @@ export default function Footer() {
               </Link>
 
               {/* Tagline */}
-              <h3 className="text-2xl font-black text-[#fbf5ea] mb-6">
+              <h3 className="text-2xl font-black text-[#fbf5ea] mb-4">
                 Predict. Prevent. Protect.
               </h3>
 
-              {/* Clean Newsletter Input */}
-              <div className="flex flex-col sm:flex-row gap-3 max-w-md">
+              {/* Newsletter CTA */}
+              <p className="text-[#aeacaf] text-sm mb-6 leading-relaxed">
+                Stay updated with the latest health insights, product updates,
+                and exclusive offers from NxRing.
+              </p>
+
+              {/* Newsletter Subscription Form */}
+              <form
+                onSubmit={handleNewsletterSubmit}
+                className="space-y-4 max-w-md"
+              >
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    disabled={isSubmitting}
+                    className="flex-1 px-5 py-3.5 rounded-xl text-white placeholder:text-gray-500 outline-none text-sm font-medium transition-all duration-300 focus:ring-2 focus:ring-[#5646a3]/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                    }}
+                  />
+                  <motion.button
+                    type="submit"
+                    disabled={isSubmitting}
+                    whileHover={!isSubmitting ? { scale: 1.05 } : {}}
+                    whileTap={!isSubmitting ? { scale: 0.95 } : {}}
+                    className="px-6 py-3.5 rounded-xl font-bold text-white cursor-pointer text-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    style={{
+                      background: isSubmitting
+                        ? "rgba(86, 70, 163, 0.5)"
+                        : "#5646a3",
+                      boxShadow: isSubmitting
+                        ? "none"
+                        : "0 4px 16px rgba(86, 70, 163, 0.4)",
+                    }}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Subscribing...</span>
+                      </>
+                    ) : (
+                      "Subscribe"
+                    )}
+                  </motion.button>
+                </div>
+
+                {/* Honeypot field for bot detection (hidden) */}
                 <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-5 py-3.5 rounded-xl text-white placeholder:text-gray-500 outline-none text-sm font-medium"
-                  style={{
-                    background: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                  }}
+                  type="text"
+                  name="honeypot"
+                  style={{ display: "none" }}
+                  tabIndex="-1"
+                  autoComplete="off"
                 />
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3.5 rounded-xl font-bold text-white cursor-pointer text-sm"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #5646a3 0%, #7c6bb8 100%)",
-                    boxShadow: "0 4px 16px rgba(86, 70, 163, 0.4)",
-                  }}
-                >
-                  Subscribe
-                </motion.button>
-              </div>
+
+                {/* Status Message */}
+                {message && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.5,
+                      bounce: messageType === "success" ? 0.4 : 0.2,
+                    }}
+                    className={`flex items-center gap-2 p-3 rounded-lg text-sm font-medium transition-all duration-300 ${
+                      messageType === "success"
+                        ? "text-[#fbf5ea] border"
+                        : "bg-red-500/20 text-red-400 border border-red-500/30"
+                    }`}
+                    style={
+                      messageType === "success"
+                        ? {
+                            background: "rgba(86, 70, 163, 0.2)",
+                            borderColor: "#5646a3",
+                            boxShadow: "0 4px 15px rgba(86, 70, 163, 0.3)",
+                          }
+                        : {}
+                    }
+                  >
+                    {messageType === "success" ? (
+                      <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.2, type: "spring" }}
+                      >
+                        <IoCheckmarkCircle className="w-4 h-4 flex-shrink-0 text-[#5646a3]" />
+                      </motion.div>
+                    ) : (
+                      <IoAlertCircle className="w-4 h-4 flex-shrink-0" />
+                    )}
+                    <span>{message}</span>
+                  </motion.div>
+                )}
+
+                {/* Privacy Notice */}
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  By subscribing, you agree to receive updates about NxRing
+                  products and health insights. We respect your privacy and you
+                  can unsubscribe at any time.
+                </p>
+              </form>
             </motion.div>
           </div>
 

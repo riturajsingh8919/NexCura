@@ -15,7 +15,7 @@ export const metadata = {
 
 function page() {
   return (
-    <>
+    <div className="outfit-font">
       <Header />
       <VideoCarousel />
       <HorizontalScrollSection />
@@ -23,7 +23,7 @@ function page() {
       <FAQSection />
       <Footer />
       <GoToTopButton />
-    </>
+    </div>
   );
 }
 

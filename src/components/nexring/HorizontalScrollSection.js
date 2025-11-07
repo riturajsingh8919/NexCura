@@ -15,7 +15,7 @@ export default function HorizontalScrollSection() {
   const slides = [
     {
       id: 1,
-      video: "/ring/02.mp4",
+      video: "/ring/r1.mp4",
       title: "Smarter Health Starts With NexCura",
       description:
         "Experience AI-driven analytics that deliver real-time insights, personalized recommendations, and predictive wellness guidance.",
@@ -24,7 +24,7 @@ export default function HorizontalScrollSection() {
     },
     {
       id: 2,
-      video: "/ring/03.mp4",
+      video: "/ring/r2.mp4",
       title: "Meet NxRing - Your Health Companion",
       description:
         "Track your vitals, activity, and sleep with precision. NxRing continuously syncs real-time data to NexCura, giving you a complete picture of your wellbeing.",
@@ -33,7 +33,7 @@ export default function HorizontalScrollSection() {
     },
     {
       id: 3,
-      video: "/ring/04.mp4",
+      video: "/ring/r3.mp4",
       title: "Engineered For Precision. Designed For Comfort",
       description:
         "NxRing combines advanced multi-sensor technology with an ultra-light 3g titanium design for effortless, all-day wear. Water-resistant and built to perform, it delivers unmatched accuracy and reliability.",

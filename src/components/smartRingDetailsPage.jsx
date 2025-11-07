@@ -186,7 +186,7 @@ const SmartRingDetails = ({ product }) => {
 
   return (
     <>
-      <div className="bg-gradient-to-b from-[#000d24] via-[#001233] to-[#000d24] text-white py-20 md:py-28 relative">
+      <div className="bg-gradient-to-b from-[#000d24] via-[#001233] to-[#000d24] text-white py-20 md:py-28 relative outfit-font">
         {/* Background Grid Effect */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000,transparent)]" />
 
@@ -353,7 +353,7 @@ const SmartRingDetails = ({ product }) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-3xl md:text-4xl font-black text-[#fbf5ea] leading-tight"
+                  className="text-3xl md:text-4xl font-medium text-[#fbf5ea] leading-tight"
                 >
                   Buy NxRing
                 </motion.h1>
@@ -366,7 +366,7 @@ const SmartRingDetails = ({ product }) => {
                   className="space-y-2"
                 >
                   <div className="flex items-baseline gap-4">
-                    <span className="text-4xl md:text-5xl font-black text-[#fbf5ea]">
+                    <span className="text-4xl md:text-5xl font-normal text-[#fbf5ea]">
                       {currentProduct.price}
                     </span>
                     {currentProduct.oldPrice && (
@@ -405,24 +405,25 @@ const SmartRingDetails = ({ product }) => {
                       <h3 className="text-lg font-bold text-white flex items-center gap-2">
                         Select Color: {/* Color sold out message */}
                         {soldOutMessage &&
-                          soldOutMessage.includes("Silver") && (
-                            <motion.p
+                          (soldOutMessage.includes("Silver") ||
+                            soldOutMessage.includes("Gold")) && (
+                            <motion.span
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
                               className="text-sm text-white font-medium"
                             >
                               {soldOutMessage}
-                            </motion.p>
+                            </motion.span>
                           )}
                       </h3>
 
                       <div className="flex flex-wrap gap-3">
                         {currentProduct.colors?.map((color, index) => {
                           // Define sold out colors
-                          const isSoldOut = color.name
-                            .toLowerCase()
-                            .includes("silver");
+                          const isSoldOut =
+                            color.name.toLowerCase().includes("silver") ||
+                            color.name.toLowerCase() === "gold";
 
                           return (
                             <motion.button
@@ -437,7 +438,7 @@ const SmartRingDetails = ({ product }) => {
                               onClick={() => {
                                 if (isSoldOut) {
                                   setSoldOutMessage(
-                                    `Matte Silver of size ${selectedSize} is currently out of stock`
+                                    `${color.name} of size ${selectedSize} is currently out of stock`
                                   );
                                   setTimeout(() => setSoldOutMessage(""), 3000);
                                 } else {
@@ -500,7 +501,7 @@ const SmartRingDetails = ({ product }) => {
                       </h3>
                       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
                         {(currentProduct.sizes || []).map((size, index) => {
-                          const isSoldOut = size === 6 || size === 7;
+                          const isSoldOut = size === 6;
                           return (
                             <motion.button
                               key={size}

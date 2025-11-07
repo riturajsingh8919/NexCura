@@ -11,10 +11,10 @@ export const metadata = {
 
 function SmartRing() {
   return (
-    <>
+    <div className="outfit-font">
       <link rel="canonical" href="https://www.genaihealth.care/smart-ring" />
       <SmartRingPage />
-    </>
+    </div>
   );
 }
 

@@ -199,7 +199,7 @@ const CartPage = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-10"
           >
-            <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-medium bg-gradient-to-r from-[#fbf5ea] via-white to-[#fbf5ea] bg-clip-text text-transparent">
               Your Cart
             </h1>
             <p className="text-gray-400 mt-2 text-lg">

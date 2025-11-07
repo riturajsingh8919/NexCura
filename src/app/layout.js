@@ -1,7 +1,6 @@
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Noto_Sans } from "next/font/google";
+import { Outfit } from "next/font/google";
 import Providers from "./providers";
 import Script from "next/script";
 
@@ -10,11 +9,11 @@ const notoSans = Noto_Sans({
   weight: ["400", "500", "700"],
 });
 
-// export const metadata = {
-//   title: "GenAI Healthcare",
-//   description:
-//     "GenAI Healthcare Inc. proudly receives the prestigious Best New Startup 2024 Award, recognizing our innovative contributions to healthcare technology and our commitment to transforming patient care through AI-driven solutions.",
-// };
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export default function RootLayout({ children }) {
   const websiteSchema = {
@@ -150,16 +149,9 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={`${notoSans.className} antialiased`}>
+      <body className={`${notoSans.className} ${outfit.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
-      {/* <body className={`${notoSans.className} antialiased`}>
-        <Providers>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
-      </body> */}
     </html>
   );
 }

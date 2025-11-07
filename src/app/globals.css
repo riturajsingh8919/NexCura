@@ -10,6 +10,10 @@ body {
   overflow-x: hidden !important;
 }
 
+.outfit-font {
+  font-family: "Outfit", sans-serif !important;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

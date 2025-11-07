@@ -39,10 +39,11 @@ export default function SmartRingPage() {
 
   const handleOrderNowClick = () => {
     // Navigate directly to product details page
-    const blackProduct = products.find((p) => p.productColor === "Matte Black");
+    const blackProduct = products.find((p) => p.productColor === "Black");
     if (blackProduct) {
       router.push(`/smartRingDetails/${blackProduct.productId}`);
     }
+    console.log(products);
   };
 
   if (loading) {
@@ -117,7 +118,7 @@ export default function SmartRingPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
-                  className="text-4xl sm:text-5xl md:text-6xl font-black leading-tight"
+                  className="text-4xl sm:text-5xl md:text-6xl font-medium leading-tight"
                 >
                   <span className="text-[#fbf5ea]">Smarter insights.</span>
                   <br />
@@ -179,7 +180,7 @@ export default function SmartRingPage() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 text-[#fbf5ea]">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-normal mb-4 text-[#fbf5ea]">
                 Pre-Order Available Now
               </h2>
             </motion.div>
@@ -254,7 +255,7 @@ export default function SmartRingPage() {
 
                             {/* Compact Price */}
                             <div className="flex items-baseline gap-3">
-                              <span className="text-3xl md:text-4xl font-black text-white">
+                              <span className="text-3xl md:text-4xl font-normal text-white">
                                 {products[0].currencySymbol}
                                 {products[0].productCurrentAmount}
                               </span>
