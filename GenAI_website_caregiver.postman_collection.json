@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "9535ed62-a128-4ab9-ab3d-eade32717c55",
+		"name": "GenAI_website_caregiver",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38684371",
+		"_collection_link": "https://genai-backend.postman.co/workspace/GenAI-Backend-Workspace~1dded33f-da6a-4bd1-b3e1-3d0a8cd6a867/collection/38684371-9535ed62-a128-4ab9-ab3d-eade32717c55?action=share&source=collection_link&creator=38684371"
+	},
+	"item": [
+		{
+			"name": "createUser",
+			"item": [
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// {\r\n//     \"userEmail\": \"caregiver@gmail.com\",\r\n//     \"role\":\"Individual\"\r\n// }\r\n\r\n// {\r\n//     \"userEmail\": \"dependent1@gmail.com\",\r\n//     \"role\":\"Dependant\",\r\n//     \"caregiverEmail\":\"caregiver@gmail.com\"\r\n// }\r\n\r\n// {\r\n//     \"userEmail\": \"dependent2@gmail.com\",\r\n//     \"role\":\"Dependant\",\r\n//     \"caregiverEmail\":\"caregiver@gmail.com\"\r\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{devBaseURL}}/user/createUser"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getCartByEmail",
+			"item": [
+				{
+					"name": "getCartByEmail",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{devBaseURL}}/user/getCartByEmail?userEmail=dependent1@gmail.com",
+							"host": [
+								"{{devBaseURL}}"
+							],
+							"path": [
+								"user",
+								"getCartByEmail"
+							],
+							"query": [
+								{
+									"key": "userEmail",
+									"value": "dependent1@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getDependantDetails",
+			"item": [
+				{
+					"name": "getDependantDetails",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{devBaseURL}}/user/getDependantDetails?userEmail=dependent1@gmail.com",
+							"host": [
+								"{{devBaseURL}}"
+							],
+							"path": [
+								"user",
+								"getDependantDetails"
+							],
+							"query": [
+								{
+									"key": "userEmail",
+									"value": "dependent1@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "removeDependant",
+			"item": [
+				{
+					"name": "removeDependant",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userEmail\":\"caregiver@gmail.com\",\r\n    \"dependantEmail\":\"dependant1@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{devBaseURL}}/user/removeDependant"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "updateCart",
+			"item": [
+				{
+					"name": "updateCart",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userEmail\":\"caregiver@gmail.com\",\r\n    // \"cartItemId\":\"92dc1528-6583-4d3a-a35e-af705a06b7c8\"         //to remove a product from cart\r\n    \"cartDetails\":{\r\n        \"id\":\"4c8a2f\",\r\n        \"size\":\"6\",\r\n        \"qty\":\"1\",\r\n        \"ringFor\":\"caregiver@gmail.com\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "createCheckoutSession",
+			"item": [
+				{
+					"name": "createCheckoutSession",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 199.99,\r\n    \"currencyCode\": \"USD\",\r\n    \"currencySymbol\": \"$\",\r\n    \"cartItems\": [\r\n      {\r\n        \"productId\": \"4c8a2f\",\r\n        \"ringFor\":\"caregiver@gmail.com\",\r\n        \"productSize\": 6,\r\n        \"productAmount\": 199.99,\r\n        \"deliveryDate\":\"end of December 2025\",\r\n        \"name\": \"Smart Ring\",\r\n        \"productDetails\": \"Nexcura Smart Ring | Health & Fitness Tracker | Stress & Sleep Monitoring | Buy Ring Sizing Kit First | 15+ Workout Modes | Track Steps, HRV, HR, SPO2 | Smart Ring for Women & Men | Silver\"\r\n      }\r\n    ],\r\n    \"userEmail\": \"caregiver@gmail.com\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{devBaseURL}}/createCheckoutSession"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getAllProductOrders",
+			"item": [
+				{
+					"name": "getAllProductOrders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{devBaseURL}}/getAllProductOrders?userEmail=mkpkowsi@gmail.com",
+							"host": [
+								"{{devBaseURL}}"
+							],
+							"path": [
+								"getAllProductOrders"
+							],
+							"query": [
+								{
+									"key": "userEmail",
+									"value": "mkpkowsi@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getAllProducts",
+			"item": [
+				{
+					"name": "getAllProducts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{devBaseURL}}/getAllProducts"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getProductByProductId",
+			"item": [
+				{
+					"name": "getProductByProductId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{devBaseURL}}/getProductByProductId?productId=4c8a2f",
+							"host": [
+								"{{devBaseURL}}"
+							],
+							"path": [
+								"getProductByProductId"
+							],
+							"query": [
+								{
+									"key": "productId",
+									"value": "4c8a2f"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "devBaseURL",
+			"value": ""
+		},
+		{
+			"key": "prodBaseURL",
+			"value": ""
+		}
+	]
+}

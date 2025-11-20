@@ -17,8 +17,10 @@ export const login = createAsyncThunk(
   "auth/login",
   async (data, { rejectWithValue }) => {
     const { email, password } = data;
+    console.log("🔄 Redux Login Thunk started for:", email);
     try {
       const user = await signIn(email, password);
+      console.log("📦 Cognito SignIn returned:", user);
 
       const guid = user?.username || "";
       const tokens = user?.signInUserSession?.idToken?.jwtToken || null;
@@ -28,11 +30,19 @@ export const login = createAsyncThunk(
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userInitial", initial);
 
-        return { email, initial, guid, token: tokens };
+        const returnData = { email, initial, guid, token: tokens };
+        console.log("✅ Redux Login Success - Returning:", returnData);
+        return returnData;
       }
 
-      return { email, guid, initial: "" };
+      const returnData = { email, guid, initial: "" };
+      console.log(
+        "✅ Redux Login Success (no window) - Returning:",
+        returnData
+      );
+      return returnData;
     } catch (error) {
+      console.error("❌ Redux Login Error:", error);
       return rejectWithValue(error.message);
     }
   }

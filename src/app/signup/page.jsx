@@ -1,10 +1,10 @@
 import React from "react";
-import Signup from "@/signup/signup";
+import SimpleSignupFlow from "@/signup/simpleSignupFlowFixed";
 
 function SignUpPage() {
   return (
     <>
-      <Signup />
+      <SimpleSignupFlow />
     </>
   );
 }
